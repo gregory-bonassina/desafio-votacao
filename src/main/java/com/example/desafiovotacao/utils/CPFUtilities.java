@@ -2,9 +2,6 @@ package com.example.desafiovotacao.utils;
 
 import java.util.Random;
 
-import org.springframework.stereotype.Component;
-
-@Component
 public class CPFUtilities {
 
     public static Boolean validateCPF(String cpf) {
