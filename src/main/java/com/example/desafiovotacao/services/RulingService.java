@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.desafiovotacao.dtos.CreatedRulingDTO;
 import com.example.desafiovotacao.dtos.responses.RulingResponseDTO;
+import com.example.desafiovotacao.dtos.responses.VoteResultResponseDTO;
 import com.example.desafiovotacao.entities.RulingEntity;
 import com.example.desafiovotacao.exceptions.FieldValidationException;
 import com.example.desafiovotacao.exceptions.RulingNotFoundException;
@@ -43,6 +44,26 @@ public class RulingService {
                                                          });
 
         return rulingEntityToResponseDTO(rulingEntity);
+    }
+
+    public VoteResultResponseDTO countVotes(Integer rulingId) {
+        RulingEntity rulingEntity = this.rulingRepository.findById(rulingId)
+                                                         .orElseThrow(() -> {
+                                                            throw new RulingNotFoundException();
+                                                         });
+
+        VoteResultResponseDTO voteResultResponseDTO = this.rulingRepository.countVotes(rulingId);
+
+        Long favorVotes = voteResultResponseDTO.getFavorVotes() != null ? voteResultResponseDTO.getFavorVotes() : 0;
+        Long againstVotes = voteResultResponseDTO.getAgainstVotes() != null ? voteResultResponseDTO.getAgainstVotes() : 0;
+
+        return VoteResultResponseDTO.builder()
+                                    .favorVotes(favorVotes)
+                                    .againstVotes(againstVotes)
+                                    .title(rulingEntity.getTitle())
+                                    .description(rulingEntity.getDescription())
+                                    .result(favorVotes == againstVotes ? "Empate" : (favorVotes > againstVotes ? "Aprovada" : "Desaprovada"))
+                                    .build();
     }
 
     private RulingResponseDTO rulingEntityToResponseDTO(RulingEntity sessionEntity) {

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.desafiovotacao.api.v1.RulingControllerApi;
 import com.example.desafiovotacao.dtos.CreatedRulingDTO;
 import com.example.desafiovotacao.dtos.responses.RulingResponseDTO;
+import com.example.desafiovotacao.dtos.responses.VoteResultResponseDTO;
 import com.example.desafiovotacao.services.RulingService;
 
 import jakarta.validation.Valid;
@@ -52,5 +53,15 @@ public class RulingController implements RulingControllerApi {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-    
+
+    @Override
+    public ResponseEntity<Object> countVotes(Integer rulingId) {
+        try {
+            VoteResultResponseDTO result = this.rulingService.countVotes(rulingId);
+            
+            return ResponseEntity.ok().body(result);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }

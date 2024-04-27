@@ -22,4 +22,8 @@ public interface RulingControllerApi {
 
     @GetMapping("/{rulingId}")
     public ResponseEntity<Object> findById(@PathVariable Integer rulingId);
+
+    @GetMapping("/count/votes/{rulingId}")
+    public ResponseEntity<Object> countVotes(@PathVariable Integer rulingId);
+
 } 
