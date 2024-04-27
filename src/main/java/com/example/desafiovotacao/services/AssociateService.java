@@ -1,5 +1,7 @@
 package com.example.desafiovotacao.services;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.example.desafiovotacao.dtos.CreatedAssociateDTO;
@@ -38,10 +40,17 @@ public class AssociateService {
         return newAssociateEntity;
     }
 
-    public AssociateEntity getAssociateByCpf(String cpf) {
-        return this.associateRepository.findByCpf(cpf).orElseThrow(() -> {
-            throw new AssociateNotFoundException();
-        });
+    public List<AssociateEntity> listAllAssociates() {
+        return this.associateRepository.findAll();
+    }
+
+    public AssociateEntity findById(Integer associateId) {
+        AssociateEntity associateEntity = this.associateRepository.findById(associateId)
+                                                                  .orElseThrow(() -> {
+                                                                      throw new AssociateNotFoundException();
+                                                                  });
+
+        return associateEntity;
     }
 
     private void validateFields(CreatedAssociateDTO createdAssociateDTO) {

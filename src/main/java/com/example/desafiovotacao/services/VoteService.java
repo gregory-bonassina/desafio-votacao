@@ -1,9 +1,5 @@
 package com.example.desafiovotacao.services;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.util.Optional;
-
 import org.springframework.stereotype.Service;
 
 import com.example.desafiovotacao.dtos.CreatedVoteDTO;
