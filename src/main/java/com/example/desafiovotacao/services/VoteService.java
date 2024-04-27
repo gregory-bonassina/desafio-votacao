@@ -50,13 +50,17 @@ public class VoteService {
                                                                       .resultVote(createdVoteDTO.getResultVote())
                                                                       .build());
 
+        return voteEntityToResponseDTO(newVoteEntity);
+    }
+
+    private VoteResponseDTO voteEntityToResponseDTO(VoteEntity voteEntity) {
         return VoteResponseDTO.builder()
-                                     .id(newVoteEntity.getId())
-                                     .associateId(newVoteEntity.getAssociateId())
-                                     .sessionId(newVoteEntity.getSessionId())
-                                     .resultVote(newVoteEntity.getResultVote() ? "Sim" : "Não")
-                                     .createdAt(newVoteEntity.getCreatedAt())
-                                     .build();
+                              .id(voteEntity.getId())
+                              .associateId(voteEntity.getAssociateId())
+                              .sessionId(voteEntity.getSessionId())
+                              .resultVote(voteEntity.getResultVote() ? "Sim" : "Não")
+                              .createdAt(voteEntity.getCreatedAt())
+                              .build();
     }
 
     private void validateFields(CreatedVoteDTO createdVoteDTO) {

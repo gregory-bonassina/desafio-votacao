@@ -41,25 +41,13 @@ public class SessionService {
                                                                                   .rulingId(rulingEntity.getId())
                                                                                   .duration(createdSessionDTO.getDuration() == null ? SessionEntity.DEFAULT_DURATION : createdSessionDTO.getDuration() )
                                                                                   .build());
-        return SessionResponseDTO.builder()
-                                 .id(newSessionEntity.getId())
-                                 .rulingId(newSessionEntity.getRulingId())
-                                 .duration(newSessionEntity.getDuration())
-                                 .createdAt(newSessionEntity.getCreatedAt())
-                                 .build();
+        return sessionEntityToResponseDTO(newSessionEntity);
     }
 
     public List<SessionResponseDTO> listAllSessions() {
         List<SessionEntity> allSessions = this.sessionRepository.findAll();
 
-        return allSessions.stream().map(sessionEntity -> {
-            return SessionResponseDTO.builder()
-                                     .id(sessionEntity.getId())
-                                     .rulingId(sessionEntity.getRulingId())
-                                     .duration(sessionEntity.getDuration())
-                                     .createdAt(sessionEntity.getCreatedAt())
-                                     .build();
-        }).toList();
+        return allSessions.stream().map(this::sessionEntityToResponseDTO).toList();
     }
 
     public SessionResponseDTO findById(Integer sessionId) {
@@ -68,6 +56,10 @@ public class SessionService {
                                                                 throw new SessionNotFoundException();
                                                             });
 
+        return sessionEntityToResponseDTO(sessionEntity);
+    }
+
+    private SessionResponseDTO sessionEntityToResponseDTO(SessionEntity sessionEntity) {
         return SessionResponseDTO.builder()
                                  .id(sessionEntity.getId())
                                  .rulingId(sessionEntity.getRulingId())
