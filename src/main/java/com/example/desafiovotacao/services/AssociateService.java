@@ -2,6 +2,7 @@ package com.example.desafiovotacao.services;
 
 import org.springframework.stereotype.Service;
 
+import com.example.desafiovotacao.dtos.CreatedAssociateDTO;
 import com.example.desafiovotacao.entities.AssociateEntity;
 import com.example.desafiovotacao.exceptions.AssociateFoundException;
 import com.example.desafiovotacao.exceptions.AssociateNotFoundException;
@@ -18,18 +19,23 @@ public class AssociateService {
     
     private final AssociateRepository associateRepository;
 
-    public AssociateEntity create(AssociateEntity associateEntity) {
-        validateFields(associateEntity);
+    public AssociateEntity create(CreatedAssociateDTO createdAssociateDTO) {
+        validateFields(createdAssociateDTO);
 
-        this.associateRepository.findByCpf(associateEntity.getCpf()).ifPresent( user -> {
+        this.associateRepository.findByCpf(createdAssociateDTO.getCpf()).ifPresent( user -> {
             throw new AssociateFoundException();
         });
 
-        if ( ! CPFUtilities.validateCPF(associateEntity.getCpf()) ) {
+        if ( ! CPFUtilities.validateCPF(createdAssociateDTO.getCpf()) ) {
             throw new WrongCPFException();
         }
 
-        return this.associateRepository.save(associateEntity);
+        AssociateEntity newAssociateEntity = this.associateRepository.save(AssociateEntity.builder()
+                                                                                          .cpf(createdAssociateDTO.getCpf())
+                                                                                          .name(createdAssociateDTO.getName())
+                                                                                          .build());
+
+        return newAssociateEntity;
     }
 
     public AssociateEntity getAssociateByCpf(String cpf) {
@@ -38,12 +44,12 @@ public class AssociateService {
         });
     }
 
-    private void validateFields(AssociateEntity associateEntity) {
-        if (associateEntity.getCpf() == null || associateEntity.getCpf().isEmpty() ) {
+    private void validateFields(CreatedAssociateDTO createdAssociateDTO) {
+        if (createdAssociateDTO.getCpf() == null || createdAssociateDTO.getCpf().isEmpty()) {
             throw new FieldValidationException("cpf");
         }
 
-        if (associateEntity.getName() == null || associateEntity.getName().isEmpty() ) {
+        if (createdAssociateDTO.getName() == null || createdAssociateDTO.getName().isEmpty()) {
             throw new FieldValidationException("name");
         }
     }

@@ -22,12 +22,9 @@ public class AssociateController implements AssociateControllerApi {
     @Override
     public ResponseEntity<Object> create(@Valid @RequestBody CreatedAssociateDTO createdAssociateDTO) {
         try {
-            AssociateEntity associateEntity = associateService.create(AssociateEntity.builder()
-                                                                                     .cpf(createdAssociateDTO.getCpf())
-                                                                                     .name(createdAssociateDTO.getName())
-                                                                                     .build());
+            AssociateEntity result = associateService.create(createdAssociateDTO);
 
-            return ResponseEntity.status(HttpStatus.CREATED).body(associateEntity);
+            return ResponseEntity.status(HttpStatus.CREATED).body(result);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
