@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.desafiovotacao.api.v1.AssociateControllerApi;
 import com.example.desafiovotacao.dtos.CreatedAssociateDTO;
-import com.example.desafiovotacao.entities.AssociateEntity;
+import com.example.desafiovotacao.dtos.responses.AssociateResponseDTO;
 import com.example.desafiovotacao.services.AssociateService;
 
 import jakarta.validation.Valid;
@@ -25,7 +25,7 @@ public class AssociateController implements AssociateControllerApi {
     @Override
     public ResponseEntity<Object> create(@Valid @RequestBody CreatedAssociateDTO createdAssociateDTO) {
         try {
-            AssociateEntity result = associateService.create(createdAssociateDTO);
+            AssociateResponseDTO result = associateService.create(createdAssociateDTO);
 
             return ResponseEntity.status(HttpStatus.CREATED).body(result);
         } catch (Exception e) {
@@ -36,7 +36,7 @@ public class AssociateController implements AssociateControllerApi {
     @Override
     public ResponseEntity<Object> listAll() {
         try {
-            List<AssociateEntity> result = this.associateService.listAllAssociates();
+            List<AssociateResponseDTO> result = this.associateService.listAllAssociates();
             
             return ResponseEntity.ok().body(result);
         } catch (Exception e) {
@@ -47,7 +47,7 @@ public class AssociateController implements AssociateControllerApi {
     @Override
     public ResponseEntity<Object> findById(@PathVariable Integer associateId) {
         try {
-            AssociateEntity result = this.associateService.findById(associateId);
+            AssociateResponseDTO result = this.associateService.findById(associateId);
             
             return ResponseEntity.ok().body(result);
         } catch (Exception e) {
