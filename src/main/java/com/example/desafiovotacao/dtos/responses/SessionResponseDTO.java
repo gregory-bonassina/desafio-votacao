@@ -13,12 +13,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CreatedVoteResponseDTO {
-    
-    private Integer id;
-    private String resultVote;
-    private Integer associateId;
-    private Integer sessionId;
+public class SessionResponseDTO {
 
+    private Integer id;
+    private Integer rulingId;
+    private Integer duration;
     private LocalDateTime createdAt;
 }

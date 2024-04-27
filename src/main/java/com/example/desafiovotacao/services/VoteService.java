@@ -7,7 +7,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.example.desafiovotacao.dtos.CreatedVoteDTO;
-import com.example.desafiovotacao.dtos.responses.CreatedVoteResponseDTO;
+import com.example.desafiovotacao.dtos.responses.VoteResponseDTO;
 import com.example.desafiovotacao.entities.SessionEntity;
 import com.example.desafiovotacao.entities.VoteEntity;
 import com.example.desafiovotacao.exceptions.AssociateAlreadyVoteException;
@@ -29,7 +29,7 @@ public class VoteService {
     private final AssociateRepository associateRepository;
     private final SessionRepository sessionRepository;
     
-    public CreatedVoteResponseDTO create(CreatedVoteDTO createdVoteDTO) {
+    public VoteResponseDTO create(CreatedVoteDTO createdVoteDTO) {
         validateFields(createdVoteDTO);
 
         this.associateRepository.findById(createdVoteDTO.getAssociateId()).orElseThrow(() -> {
@@ -54,7 +54,7 @@ public class VoteService {
                                                                       .resultVote(createdVoteDTO.getResultVote())
                                                                       .build());
 
-        return CreatedVoteResponseDTO.builder()
+        return VoteResponseDTO.builder()
                                      .id(newVoteEntity.getId())
                                      .associateId(newVoteEntity.getAssociateId())
                                      .sessionId(newVoteEntity.getSessionId())
