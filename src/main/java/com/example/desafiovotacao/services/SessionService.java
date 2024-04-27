@@ -8,6 +8,7 @@ import com.example.desafiovotacao.entities.RulingEntity;
 import com.example.desafiovotacao.entities.SessionEntity;
 import com.example.desafiovotacao.exceptions.FieldValidationException;
 import com.example.desafiovotacao.exceptions.RulingNotFoundException;
+import com.example.desafiovotacao.exceptions.SessionOpenException;
 import com.example.desafiovotacao.repositories.RulingRepository;
 import com.example.desafiovotacao.repositories.SessionRepository;
 
@@ -26,6 +27,12 @@ public class SessionService {
         RulingEntity rulingEntity = rulingRepository.findById(createdSessionDTO.getRulingId()).orElseThrow(() -> {
             throw new RulingNotFoundException();
         });
+
+        this.sessionRepository.findAllByRulingId(createdSessionDTO.getRulingId()).forEach( session -> {
+            if(!session.isClosed()) {
+                throw new SessionOpenException();
+            }
+        } );
 
         SessionEntity newSessionEntity = this.sessionRepository.save(SessionEntity.builder()
                                                                                   .rulingId(rulingEntity.getId())

@@ -19,7 +19,7 @@ public class SessionController implements SessionControllerApi {
     private final SessionService sessionSerivice;
 
     @Override
-    public ResponseEntity<Object> create(@Valid CreatedSessionDTO createdSessionDTO) {
+    public ResponseEntity<Object> open(@Valid CreatedSessionDTO createdSessionDTO) {
         try {
             CreatedSessionResponseDTO result = sessionSerivice.create(createdSessionDTO);
 

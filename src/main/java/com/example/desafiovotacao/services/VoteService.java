@@ -40,7 +40,7 @@ public class VoteService {
             throw new SessionNotFoundException();
         });
 
-        if(isSessionClosed(sessionEntity)) {
+        if(sessionEntity.isClosed()) {
             throw new SessionClosedException();
         }
 
@@ -61,14 +61,6 @@ public class VoteService {
                                      .resultVote(newVoteEntity.getResultVote() ? "Sim" : "Não")
                                      .createdAt(newVoteEntity.getCreatedAt())
                                      .build();
-    }
-
-    private boolean isSessionClosed(SessionEntity sessionEntity) {
-        LocalDateTime now = LocalDateTime.now();
-
-        LocalDateTime sessionEnd = sessionEntity.getCreatedAt().plusSeconds(sessionEntity.getDuration());
-        
-        return now.isAfter(sessionEnd);
     }
 
     private void validateFields(CreatedVoteDTO createdVoteDTO) {

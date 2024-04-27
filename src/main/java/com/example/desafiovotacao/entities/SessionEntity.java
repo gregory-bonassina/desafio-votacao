@@ -40,4 +40,12 @@ public class SessionEntity {
 
     @CreationTimestamp
     private LocalDateTime createdAt;
+
+    public boolean isClosed() {
+        LocalDateTime now = LocalDateTime.now();
+
+        LocalDateTime sessionEnd = this.createdAt.plusSeconds(this.duration);
+        
+        return now.isAfter(sessionEnd);
+    }
 }

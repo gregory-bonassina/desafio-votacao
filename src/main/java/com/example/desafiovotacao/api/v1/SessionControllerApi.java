@@ -12,6 +12,6 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/v1/session")
 public interface SessionControllerApi {
     
-    @PostMapping("/create")
-    public ResponseEntity<Object> create(@Valid @RequestBody CreatedSessionDTO createdSessionDTO);
+    @PostMapping("/open")
+    public ResponseEntity<Object> open(@Valid @RequestBody CreatedSessionDTO createdSessionDTO);
 }
