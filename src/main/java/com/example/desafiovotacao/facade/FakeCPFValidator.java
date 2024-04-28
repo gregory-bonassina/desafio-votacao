@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import com.example.desafiovotacao.dtos.CPFValidatorDTO;
 
-@FeignClient(name = "fakeCPFValidator", url = "http://localhost:8080")
+@FeignClient(name = "fakeCPFValidator", url = "${fakecpfvalidator.url}")
 public interface FakeCPFValidator {
     
     @PostMapping("/client/cpf/validate/{cpf}")
