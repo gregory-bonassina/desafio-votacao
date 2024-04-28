@@ -1,4 +1,4 @@
-package com.example.desafiovotacao.repository;
+package com.example.desafiovotacao.repositories;
 
 import java.util.Optional;
 
@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import com.example.desafiovotacao.entities.AssociateEntity;
-import com.example.desafiovotacao.repositories.AssociateRepository;
 
 @DataJpaTest
 public class AssociateRepositoryTest {
