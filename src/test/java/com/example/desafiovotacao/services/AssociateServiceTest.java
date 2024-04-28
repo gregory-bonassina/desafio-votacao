@@ -1,13 +1,20 @@
 package com.example.desafiovotacao.services;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+
+import java.util.Optional;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import com.example.desafiovotacao.dtos.CreatedAssociateDTO;
 import com.example.desafiovotacao.dtos.responses.AssociateResponseDTO;
@@ -18,88 +25,108 @@ import com.example.desafiovotacao.exceptions.FieldValidationException;
 import com.example.desafiovotacao.exceptions.WrongCPFException;
 import com.example.desafiovotacao.repositories.AssociateRepository;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-@SpringBootTest
-@AutoConfigureTestDatabase
+@ExtendWith(MockitoExtension.class)
 public class AssociateServiceTest {
     
-    @Autowired
+    @InjectMocks
     private AssociateService associateService;
 
-    @Autowired
+    @Mock
     private AssociateRepository associateRepository;
 
-    @Mock
-    private CreatedAssociateDTO createdAssociateDTO;
-
-    @BeforeEach
-    void before() {
-        createdAssociateDTO = CreatedAssociateDTO.builder()
-                                                 .name("Associate test")
-                                                 .cpf("661.338.900-53")
-                                                 .build();
-    }
-
-    @AfterEach
-    void after() {
-        associateRepository.deleteAll();
-    }
-
     @Test
+    @DisplayName("Should Create Associate")
     void shouldCreateAssociate() {
-        AssociateResponseDTO associateResponseDTO = associateService.create(createdAssociateDTO);
+        String mockedName = "Associate Test";
+        String mockedCPF = "661.338.900-53";
+
+        AssociateEntity associateEntity = AssociateEntity.builder()
+                                                         .name(mockedName) 
+                                                         .cpf(mockedCPF)
+                                                         .build();
+
+        when(associateRepository.findByCpf(mockedCPF)).thenReturn(Optional.empty());
+        when(associateRepository.save(associateEntity)).thenReturn(associateEntity);
+        
+        AssociateResponseDTO associateResponseDTO = associateService.create(CreatedAssociateDTO.builder()
+                                                                                               .name(mockedName)
+                                                                                               .cpf(mockedCPF)
+                                                                                               .build());
 
         Assertions.assertNotNull(associateResponseDTO);
+        Assertions.assertEquals(mockedName, associateResponseDTO.getName());
+        Assertions.assertEquals(mockedCPF, associateResponseDTO.getCpf());
     }
 
     @Test
+    @DisplayName("Should Create Throws FieldValidationException If Missing Fields")
     void shouldCreateThrowsFieldValidationExceptionIfMissingFields() {
-        try {
-            associateService.create(CreatedAssociateDTO.builder().build());
-        } catch (Exception e) {
-            assertThat(e).isInstanceOf(FieldValidationException.class);
-        }
+        Assertions.assertThrows(FieldValidationException.class, () -> associateService.create(CreatedAssociateDTO.builder().build()));
     }
 
     @Test
+    @DisplayName("Should Create Throws AssociateFoundException If Already Exists Associate With Same CPF")
     void shouldCreateThrowsAssociateFoundExceptionIfAlreadyExistsAssociateWithSameCPF() {
-        associateService.create(createdAssociateDTO);
-        try {
-            associateService.create(createdAssociateDTO);
-        } catch (Exception e) {
-            assertThat(e).isInstanceOf(AssociateFoundException.class);
-        }
+        String mockedName = "Associate Test";
+        String mockedCPF = "661.338.900-53";
+
+        AssociateEntity associateEntity = AssociateEntity.builder()
+                                                         .name(mockedName) 
+                                                         .cpf(mockedCPF)
+                                                         .build();
+
+        when(associateRepository.findByCpf(mockedCPF)).thenReturn(Optional.of(associateEntity));
+
+        Assertions.assertThrows(AssociateFoundException.class, () -> associateService.create(CreatedAssociateDTO.builder()
+                                                                                                                             .name(mockedName)
+                                                                                                                             .cpf(mockedCPF)
+                                                                                                                             .build()));
     }
 
     @Test
+    @DisplayName("Should Create Throws WrongCPFException If CPF Is Invalid")
     void shouldCreateThrowsWrongCPFExceptionIfCPFIsInvalid() {
-        try {
-            createdAssociateDTO.setCpf("000.000.000-00");
-            associateService.create(createdAssociateDTO);
-        } catch (Exception e) {
-            assertThat(e).isInstanceOf(WrongCPFException.class);
-        }
+        String mockedName = "Associate Test";
+        String mockedCPF = "000.000.000-00";
+
+        when(associateRepository.findByCpf(mockedCPF)).thenReturn(Optional.empty());
+        
+        Assertions.assertThrows(WrongCPFException.class, () -> associateService.create(CreatedAssociateDTO.builder()
+                                                                                                                       .name(mockedName)
+                                                                                                                       .cpf(mockedCPF)
+                                                                                                                       .build()));
     }
 
     @Test
+    @DisplayName("Should Find By Id")
     void shouldFindById() {
-        AssociateEntity associateEntity = associateRepository.save(AssociateEntity.builder()
-                                                                                  .cpf("661.338.900-53")
-                                                                                  .name("Associate Test")
-                                                                                  .build());
+        Integer mockedId = 1;
+        String mockedName = "Associate Test";
+        String mockedCPF = "661.338.900-53";
+
+        AssociateEntity associateEntity = AssociateEntity.builder()
+                                                         .id(mockedId)
+                                                         .cpf(mockedCPF)
+                                                         .name(mockedName)
+                                                         .build();
+
+        when(associateRepository.findById(mockedId)).thenReturn(Optional.of(associateEntity));
 
         AssociateResponseDTO associateResponseDTO = associateService.findById(associateEntity.getId());
 
         Assertions.assertNotNull(associateResponseDTO);
+        Assertions.assertEquals(mockedId, associateResponseDTO.getId());
+        Assertions.assertEquals(mockedName, associateResponseDTO.getName());
+        Assertions.assertEquals(mockedCPF, associateResponseDTO.getCpf());
     }
 
     @Test
+    @DisplayName("Should Find By Id Throws AssociateNotFoundException If Associate NotFound")
     void shouldFindByIdThrowsAssociateNotFoundExceptionIfAssociateNotFound() {
-        try {
-            associateService.findById(2);
-        } catch (Exception e) {
-            assertThat(e).isInstanceOf(AssociateNotFoundException.class);
-        }
+        Integer mockedId = 1;
+
+        when(associateRepository.findById(mockedId)).thenReturn(Optional.empty());
+
+        Assertions.assertThrows(AssociateNotFoundException.class, () -> associateService.findById(mockedId));
     }
 }
