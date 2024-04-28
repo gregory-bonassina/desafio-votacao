@@ -4,6 +4,10 @@ import java.util.Random;
 
 public class CPFUtilities {
 
+    public static Boolean randomValidCpf(String cpf) {
+        return new Random().nextBoolean();
+    }
+
     public static Boolean validateCPF(String cpf) {
         cpf = cpf.replaceAll("[^0-9]", "");
         if (cpf.length() != 11) {
@@ -58,9 +62,5 @@ public class CPFUtilities {
 
     private static int random(int n) {
         return (int) (Math.random() * n);
-    }
-
-    public static Boolean facadeRandomCpf(String cpf) {
-        return new Random().nextBoolean();
     }
 }
