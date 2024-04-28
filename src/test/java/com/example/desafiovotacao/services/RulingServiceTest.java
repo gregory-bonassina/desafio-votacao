@@ -1,132 +1,135 @@
 package com.example.desafiovotacao.services;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
-import org.junit.jupiter.api.AfterEach;
+import java.util.Optional;
+
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.example.desafiovotacao.dtos.CreatedRulingDTO;
 import com.example.desafiovotacao.dtos.responses.RulingResponseDTO;
 import com.example.desafiovotacao.dtos.responses.VoteResultResponseDTO;
-import com.example.desafiovotacao.entities.AssociateEntity;
 import com.example.desafiovotacao.entities.RulingEntity;
-import com.example.desafiovotacao.entities.SessionEntity;
-import com.example.desafiovotacao.entities.VoteEntity;
 import com.example.desafiovotacao.exceptions.FieldValidationException;
 import com.example.desafiovotacao.exceptions.RulingNotFoundException;
-import com.example.desafiovotacao.repositories.AssociateRepository;
 import com.example.desafiovotacao.repositories.RulingRepository;
-import com.example.desafiovotacao.repositories.SessionRepository;
-import com.example.desafiovotacao.repositories.VoteRepository;
 
-@SpringBootTest
-@AutoConfigureTestDatabase
+@ExtendWith(MockitoExtension.class)
 public class RulingServiceTest {
     
-    @Autowired
+    @InjectMocks
     private RulingService rulingService;
 
-    @Autowired
-    private RulingRepository rulingRepository;
-    @Autowired
-    private AssociateRepository associateRepository;
-    @Autowired
-    private SessionRepository sessionRepository;
-    @Autowired
-    private VoteRepository voteRepository;
-
     @Mock
-    private CreatedRulingDTO createdRulingDTO;
-
-    @BeforeEach
-    void before() {
-        createdRulingDTO = CreatedRulingDTO.builder()
-                                           .title("Ruling Test")
-                                           .description("Description test")
-                                           .build();
-    }
-
-    @AfterEach
-    void after() {
-        voteRepository.deleteAll();
-        sessionRepository.deleteAll();
-        rulingRepository.deleteAll();
-        associateRepository.deleteAll();
-    }
+    private RulingRepository rulingRepository;
 
     @Test
+    @DisplayName("Should Create Ruling")
     void shouldCreateRuling() {
-        RulingResponseDTO rulingResponseDTO = rulingService.create(createdRulingDTO);
+        String mockTitle = "Ruling test";
+        String mockDescription = "Description test";
+
+        RulingEntity rulingEntity = RulingEntity.builder()
+                                                .title(mockTitle)
+                                                .description(mockDescription)
+                                                .build();
+
+        when(rulingRepository.save(rulingEntity)).thenReturn(rulingEntity);
+
+        RulingResponseDTO rulingResponseDTO = rulingService.create(CreatedRulingDTO.builder()
+                                                                                   .title(mockTitle)
+                                                                                   .description(mockDescription)
+                                                                                   .build());
 
         Assertions.assertNotNull(rulingResponseDTO);
+        Assertions.assertEquals(mockTitle, rulingResponseDTO.getTitle());
+        Assertions.assertEquals(mockDescription, rulingResponseDTO.getDescription());
     }
 
     @Test
+    @DisplayName("Should Create Throws FieldValidationException If Missing Fields")
     void shouldCreateThrowsFieldValidationExceptionIfMissingFields() {
-        try {
-            rulingService.create(CreatedRulingDTO.builder().build());
-        } catch (Exception e) {
-            assertThat(e).isInstanceOf(FieldValidationException.class);
-        }
+        Assertions.assertThrows(FieldValidationException.class, () -> rulingService.create(CreatedRulingDTO.builder().build()));
     }
 
     @Test
+    @DisplayName("Should Find By Id")
     void shouldFindById() {
-        RulingEntity rulingEntity = rulingRepository.save(RulingEntity.builder()
-                                                                      .title("Ruling Test")
-                                                                      .description("Description test")
-                                                                      .build());
+        Integer mockedId = 1;
+        String mockTitle = "Ruling test";
+        String mockDescription = "Description test";
 
-        RulingResponseDTO associateResponseDTO = rulingService.findById(rulingEntity.getId());
+        RulingEntity rulingEntity = RulingEntity.builder()
+                                                .id(mockedId)
+                                                .title(mockTitle)
+                                                .description(mockDescription)
+                                                .build();
 
-        Assertions.assertNotNull(associateResponseDTO);
+        when(rulingRepository.findById(mockedId)).thenReturn(Optional.of(rulingEntity));
+
+        RulingResponseDTO rulingResponseDTO = rulingService.findById(rulingEntity.getId());
+
+        Assertions.assertNotNull(rulingResponseDTO);
+        Assertions.assertEquals(mockTitle, rulingResponseDTO.getTitle());
+        Assertions.assertEquals(mockDescription, rulingResponseDTO.getDescription());
     }
 
     @Test
-    void shouldFindByIdThrowsRulingNotFoundExceptionIfAssociateNotFound() {
-        try {
-            rulingService.findById(2);
-        } catch (Exception e) {
-            assertThat(e).isInstanceOf(RulingNotFoundException.class);
-        }
+    @DisplayName("Should Find By Id Throws RulingNotFoundException If Ruling Not Found")
+    void shouldFindByIdThrowsRulingNotFoundExceptionIfRulingNotFound() {
+        Integer mockedId = 1;
+
+        when(rulingRepository.findById(mockedId)).thenReturn(Optional.empty());
+
+        Assertions.assertThrows(RulingNotFoundException.class, () -> rulingService.findById(mockedId));
     }
 
     @Test
+    @DisplayName("Should Count Votes")
     void shouldCountVotes() {
-        AssociateEntity associateEntity = associateRepository.save(AssociateEntity.builder()
-                                                                                  .cpf("661.338.900-53")
-                                                                                  .name("Associate Test")
-                                                                                  .build());
+        Integer mockedId = 1;
+        String mockTitle = "Ruling test";
+        String mockDescription = "Description test";
+        String mockResult = "Aprovada";
 
-        RulingEntity rulingEntity = rulingRepository.save(RulingEntity.builder()
-                                                                      .title("Ruling Test")
-                                                                      .description("Description test")
-                                                                      .build());
+        RulingEntity rulingEntity = RulingEntity.builder()
+                                                .id(mockedId)
+                                                .title(mockTitle)
+                                                .description(mockDescription)
+                                                .build();
 
-        SessionEntity sessionEntity = sessionRepository.save(SessionEntity.builder()
-                                                                          .rulingId(rulingEntity.getId())
-                                                                          .duration(60)
-                                                                          .build());
-
-        voteRepository.save(VoteEntity.builder()
-                                      .associateId(associateEntity.getId())
-                                      .sessionId(sessionEntity.getId())
-                                      .resultVote(true)
-                                      .build());
+        when(rulingRepository.findById(mockedId)).thenReturn(Optional.of(rulingEntity));
+        when(rulingRepository.countVotes(mockedId)).thenReturn(VoteResultResponseDTO.builder()
+                                                                                    .title(mockTitle)
+                                                                                    .description(mockDescription)
+                                                                                    .favorVotes(1L)
+                                                                                    .againstVotes(0L)
+                                                                                    .result(mockResult)
+                                                                                    .build());
 
         VoteResultResponseDTO voteResultResponseDTO = rulingService.countVotes(rulingEntity.getId());
 
         Assertions.assertNotNull(voteResultResponseDTO);
         Assertions.assertEquals(1, voteResultResponseDTO.getFavorVotes());
         Assertions.assertEquals(0, voteResultResponseDTO.getAgainstVotes());
-        Assertions.assertEquals("Aprovada", voteResultResponseDTO.getResult());
-        Assertions.assertEquals(voteResultResponseDTO.getTitle(), rulingEntity.getTitle());
-        Assertions.assertEquals(voteResultResponseDTO.getDescription(), rulingEntity.getDescription());
+        Assertions.assertEquals(mockResult, voteResultResponseDTO.getResult());
+        Assertions.assertEquals(mockTitle, voteResultResponseDTO.getTitle());
+        Assertions.assertEquals(mockDescription, voteResultResponseDTO.getDescription());
+    }
+
+    @Test
+    @DisplayName("Should Count Votes Throw RulingNotFoundException If Ruling Not Found")
+    void shouldCountVotesThrowRulingNotFoundExceptionIfRulingNotFound(){
+        Integer mockedId = 1;
+
+        when(rulingRepository.findById(mockedId)).thenReturn(Optional.empty());
+
+        Assertions.assertThrows(RulingNotFoundException.class, () -> rulingService.countVotes(mockedId));
     }
 }
