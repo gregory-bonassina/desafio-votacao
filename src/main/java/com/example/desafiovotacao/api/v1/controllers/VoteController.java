@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.desafiovotacao.api.v1.VoteControllerApi;
 import com.example.desafiovotacao.dtos.CreatedVoteDTO;
 import com.example.desafiovotacao.dtos.responses.VoteResponseDTO;
-import com.example.desafiovotacao.services.VoteService;
+import com.example.desafiovotacao.services.IVoteService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class VoteController implements VoteControllerApi {
 
-    private final VoteService voteService;
+    private final IVoteService voteService;
 
     @Override
     public ResponseEntity<Object> create(@Valid CreatedVoteDTO createdVoteDTO) {

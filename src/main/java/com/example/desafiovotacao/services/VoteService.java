@@ -19,12 +19,13 @@ import lombok.AllArgsConstructor;
 
 @Service
 @AllArgsConstructor
-public class VoteService {
+public class VoteService implements IVoteService {
 
     private final VoteRepository voteRepository;
     private final AssociateRepository associateRepository;
     private final SessionRepository sessionRepository;
     
+    @Override
     public VoteResponseDTO create(CreatedVoteDTO createdVoteDTO) {
         validateFields(createdVoteDTO);
 
