@@ -92,9 +92,9 @@ public class AssociateControllerTest {
     })
     @DisplayName("Should Find By Id") 
     void shouldFindById() throws Exception {
-        mockMvc.perform(get("/api/v1/associate/{associateId}", 1).contentType(MediaType.APPLICATION_JSON_VALUE)
-                                                                           .content(new ObjectMapper().writeValueAsString(createdAssociateDTO)))
+        mockMvc.perform(get("/api/v1/associate/{associateId}", 1))
                .andExpect(status().isOk())
+               .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                .andExpect(content().json(objectMapper.writeValueAsString(associateResponseDTO)));
     }
 
@@ -105,9 +105,9 @@ public class AssociateControllerTest {
     })
     @DisplayName("Should Find All")
     void shouldFindAll() throws Exception {
-        mockMvc.perform(get("/api/v1/associate/", 1).contentType(MediaType.APPLICATION_JSON_VALUE)
-                                                                           .content(new ObjectMapper().writeValueAsString(List.of(createdAssociateDTO))))
+        mockMvc.perform(get("/api/v1/associate/", 1))
                .andExpect(status().isOk())
+               .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                .andExpect(content().json(objectMapper.writeValueAsString(List.of(associateResponseDTO))));
     }
 }
