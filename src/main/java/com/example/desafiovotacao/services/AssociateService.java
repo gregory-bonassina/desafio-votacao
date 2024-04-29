@@ -18,10 +18,11 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class AssociateService {
+public class AssociateService implements IAssociateService {
     
     private final AssociateRepository associateRepository;
 
+    @Override
     public AssociateResponseDTO create(CreatedAssociateDTO createdAssociateDTO) {
         validateFields(createdAssociateDTO);
 
@@ -41,12 +42,14 @@ public class AssociateService {
         return associateEntityToResponseDTO(newAssociateEntity);
     }
 
+    @Override
     public List<AssociateResponseDTO> listAllAssociates() {
         List<AssociateEntity> allAssociates = this.associateRepository.findAll();
 
         return allAssociates.stream().map(this::associateEntityToResponseDTO).toList();
     }
 
+    @Override
     public AssociateResponseDTO findById(Integer associateId) {
         AssociateEntity associateEntity = this.associateRepository.findById(associateId)
                                                                   .orElseThrow(() -> {

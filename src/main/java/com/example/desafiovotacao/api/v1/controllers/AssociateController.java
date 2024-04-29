@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.desafiovotacao.api.v1.AssociateControllerApi;
 import com.example.desafiovotacao.dtos.CreatedAssociateDTO;
 import com.example.desafiovotacao.dtos.responses.AssociateResponseDTO;
-import com.example.desafiovotacao.services.AssociateService;
+import com.example.desafiovotacao.services.IAssociateService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AssociateController implements AssociateControllerApi {
     
-    private final AssociateService associateService;
+    private final IAssociateService associateService;
 
     @Override
     public ResponseEntity<Object> create(@Valid @RequestBody CreatedAssociateDTO createdAssociateDTO) {
