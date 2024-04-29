@@ -19,11 +19,12 @@ import lombok.AllArgsConstructor;
 
 @Service
 @AllArgsConstructor
-public class SessionService {
+public class SessionService implements ISessionService {
     
     private final SessionRepository sessionRepository;
     private final RulingRepository rulingRepository;
 
+    @Override
     public SessionResponseDTO create(CreatedSessionDTO createdSessionDTO) {
         validateFields(createdSessionDTO);
 
@@ -44,12 +45,14 @@ public class SessionService {
         return sessionEntityToResponseDTO(newSessionEntity);
     }
 
+    @Override
     public List<SessionResponseDTO> listAllSessions() {
         List<SessionEntity> allSessions = this.sessionRepository.findAll();
 
         return allSessions.stream().map(this::sessionEntityToResponseDTO).toList();
     }
 
+    @Override
     public SessionResponseDTO findById(Integer sessionId) {
         SessionEntity sessionEntity = this.sessionRepository.findById(sessionId)
                                                             .orElseThrow(() -> {

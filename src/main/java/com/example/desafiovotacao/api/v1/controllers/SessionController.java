@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.desafiovotacao.api.v1.SessionControllerApi;
 import com.example.desafiovotacao.dtos.CreatedSessionDTO;
 import com.example.desafiovotacao.dtos.responses.SessionResponseDTO;
-import com.example.desafiovotacao.services.SessionService;
+import com.example.desafiovotacao.services.ISessionService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SessionController implements SessionControllerApi {
 
-    private final SessionService sessionSerivice;
+    private final ISessionService sessionSerivice;
 
     @Override
     public ResponseEntity<Object> open(@Valid CreatedSessionDTO createdSessionDTO) {
