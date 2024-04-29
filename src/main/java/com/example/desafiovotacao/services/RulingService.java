@@ -16,10 +16,11 @@ import lombok.AllArgsConstructor;
 
 @Service
 @AllArgsConstructor
-public class RulingService {
+public class RulingService implements IRulingService {
     
     private RulingRepository rulingRepository;
 
+    @Override
     public RulingResponseDTO create(CreatedRulingDTO createdRulingDTO) {
         validateFields(createdRulingDTO);
 
@@ -31,12 +32,14 @@ public class RulingService {
         return rulingEntityToResponseDTO(newRulingEntity);
     }
 
+    @Override
     public List<RulingResponseDTO> listAllRulings() {
         List<RulingEntity> allRulings = this.rulingRepository.findAll();
 
         return allRulings.stream().map(this::rulingEntityToResponseDTO).toList();
     }
 
+    @Override
     public RulingResponseDTO findById(Integer rulingId) {
         RulingEntity rulingEntity = this.rulingRepository.findById(rulingId)
                                                          .orElseThrow(() -> {
@@ -46,6 +49,7 @@ public class RulingService {
         return rulingEntityToResponseDTO(rulingEntity);
     }
 
+    @Override
     public VoteResultResponseDTO countVotes(Integer rulingId) {
         RulingEntity rulingEntity = this.rulingRepository.findById(rulingId)
                                                          .orElseThrow(() -> {

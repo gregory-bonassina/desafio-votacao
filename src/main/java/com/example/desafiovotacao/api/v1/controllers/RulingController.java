@@ -10,7 +10,7 @@ import com.example.desafiovotacao.api.v1.RulingControllerApi;
 import com.example.desafiovotacao.dtos.CreatedRulingDTO;
 import com.example.desafiovotacao.dtos.responses.RulingResponseDTO;
 import com.example.desafiovotacao.dtos.responses.VoteResultResponseDTO;
-import com.example.desafiovotacao.services.RulingService;
+import com.example.desafiovotacao.services.IRulingService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class RulingController implements RulingControllerApi {
 
-    private final RulingService rulingService;
+    private final IRulingService rulingService;
 
     @Override
     public ResponseEntity<Object> create(@Valid CreatedRulingDTO createdRulingDTO) {
